@@ -5,9 +5,10 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:myportofolio_mobile/menu.dart';
+import 'package:myportofolio_mobile/screens/menu.dart';
+import 'package:myportofolio_mobile/widgets/project_card.dart';
 
 import 'package:myportofolio_mobile/main.dart';
 
@@ -33,6 +34,12 @@ void main() {
       await tester.tap(find.text(label));
       await tester.pumpAndSettle();
       expect(find.text('Kamu telah menekan tombol $label!'), findsOneWidget);
+      if (label == 'Tambah Proyek') {
+        expect(find.text('Add Project Form'), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byType(MyHomePage), findsOneWidget);
+      }
     }
     expect(tester.takeException(), isNull);
   });
