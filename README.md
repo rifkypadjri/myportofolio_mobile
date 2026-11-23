@@ -37,21 +37,29 @@ flutter test
 - **Tugas 7:** identitas pribadi; warna unik melalui `ItemHomepage.color`;
   layout adaptif yang dapat digulir; pengujian interaksi dan layar kecil;
   jawaban reflektif dan dokumentasi bantuan AI.
+- **Tutorial 09:** drawer Home/Add Project, form proyek dengan validasi,
+  dialog ringkasan, reset input, navigasi push/pushReplacement, migrasi
+  `material_ui`, dan pemisahan folder screens/widgets.
+  Lihat [catatan Tutorial 09](docs/tutorial-09.md).
 
 Tiga kartu profil menampilkan NPM, nama lengkap, dan kelas. Tombol **Lihat Proyek**,
 **Tambah Proyek**, dan **Logout** berwarna biru, hijau, dan merah. Setiap tombol
-menampilkan `Kamu telah menekan tombol [Nama Tombol]!`. Pada tahap ini, aksi
-berupa demonstrasi SnackBar; penyimpanan proyek dan autentikasi belum dibuat.
+menampilkan `Kamu telah menekan tombol [Nama Tombol]!`. Tombol Tambah Proyek
+juga membuka form proyek. Penyimpanan proyek dan autentikasi belum dibuat.
 Kartu profil disusun vertikal pada layar sempit agar nama lengkap tetap terbaca.
 
 | Berkas | Tanggung jawab |
 | --- | --- |
 | `lib/main.dart` | Entry point, MaterialApp, dan tema |
-| `lib/menu.dart` | MyHomePage, InfoCard, ItemHomepage, dan ItemCard |
+| `lib/screens/menu.dart` | MyHomePage dan InfoCard |
+| `lib/screens/project_form.dart` | Form proyek, validasi, dialog, dan reset input |
+| `lib/widgets/project_card.dart` | ItemHomepage dan ItemCard dengan navigasi |
+| `lib/widgets/left_drawer.dart` | Drawer navigasi Home dan Add Project |
 | `test/widget_test.dart` | Identitas, warna unik, ketiga SnackBar, dan layar kecil dengan teks besar |
+| `test/project_form_test.dart` | Navigasi drawer, validasi, dialog data, reset, dan form layar kecil |
 | `docs/ai-log.md` | Prompt dan cakupan bantuan AI |
 
-Validasi sesi pengerjaan: `flutter analyze` menghasilkan **No issues found**;
+Validasi sesi Tugas 7: `flutter analyze` menghasilkan **No issues found**;
 `flutter test` meluluskan **2 tes widget**.
 
 ### Tugas 7
@@ -230,11 +238,30 @@ analyzer memeriksa aspek teknis, tetapi tampilan di perangkat nyata serta
 pemahaman jawaban reflektif masih perlu diperiksa pemilik. Tidak ada perbaikan
 kode manual oleh pemilik yang diklaim dalam sesi ini.
 
-## Pengumpulan
+### Penggunaan AI pada Tugas 8
 
-Setelah commit tersedia di remote, kumpulkan tautan dengan pola
-`https://github.com/rifkypadjri/myportofolio_mobile/commit/<hash>`.
-Pastikan repositori publik dan Tutorial 08 telah dikumpulkan.
-PDF menetapkan tenggat **16 November 2026 pukul 23.59 WIB**; sesi pengerjaan ini
-berlangsung pada **18 November 2026**, sehingga sudah melewati tenggat.
-Penerimaan terlambat perlu dikonfirmasi kepada pengampu.
+
+**Tools:** Claude Code (model Claude Sonnet 5.5) di ekstensi VS Code.
+
+**Bagian yang dibantu AI:**
+- Membaca PDF dan kode yang ada, lalu merancang formulir Pengalaman
+  (`lib/screens/experience_form.dart`) dan widget input tanggal
+  (`lib/widgets/date_form_field.dart`).
+- Menambahkan kartu aksi, opsi drawer, dan penyesuaian tinggi kartu.
+- Menulis tes (`test/experience_form_test.dart` dan pembaruan
+  `test/widget_test.dart`), menjalankan `flutter analyze` dan `flutter test`.
+- Memecah pekerjaan menjadi commit kecil, melakukan push, dan menyusun draf
+  jawaban refleksi pada bagian Tugas 8.
+
+**Keterbatasan dan koreksi:**
+- Setelah kartu keempat ditambahkan, tes menunjukkan layout overflow pada layar
+  kecil dengan teks diperbesar; AI memperbaikinya dengan membuat tinggi kartu
+  mengikuti skala teks.
+- Tes otomatis tidak menggantikan uji di perangkat nyata atau Chrome; AI tidak
+  menjalankan aplikasi secara visual. Tes tanggal bergantung pada bulan
+  berjalan.
+- Keterbatasan fungsi: galat tanggal selesai tidak diperbarui otomatis ketika
+  tanggal mulai diubah, baru dihitung ulang saat Simpan ditekan. Data juga
+  belum disimpan, hanya ditampilkan di dialog.
+- Jawaban refleksi dibuat AI berdasarkan kode proyek; pemilik perlu memahami
+  dan memverifikasinya.
