@@ -24,18 +24,31 @@ void main() {
     expect(find.text('PBP B'), findsOneWidget);
     expect(find.text('Lihat Proyek'), findsOneWidget);
     expect(find.text('Tambah Proyek'), findsOneWidget);
+    expect(find.text('Tambah Pengalaman'), findsOneWidget);
     expect(find.text('Logout'), findsOneWidget);
 
     final cards = tester.widgetList<ItemCard>(find.byType(ItemCard));
-    expect(cards.map((card) => card.item.color).toSet(), hasLength(3));
+    expect(cards.map((card) => card.item.color).toSet(), hasLength(4));
 
-    for (final label in ['Lihat Proyek', 'Tambah Proyek', 'Logout']) {
+    for (final label in [
+      'Lihat Proyek',
+      'Tambah Proyek',
+      'Tambah Pengalaman',
+      'Logout',
+    ]) {
       await tester.ensureVisible(find.text(label));
       await tester.tap(find.text(label));
       await tester.pumpAndSettle();
       expect(find.text('Kamu telah menekan tombol $label!'), findsOneWidget);
-      if (label == 'Tambah Proyek') {
-        expect(find.text('Add Project Form'), findsOneWidget);
+      if (label == 'Tambah Proyek' || label == 'Tambah Pengalaman') {
+        expect(
+          find.text(
+            label == 'Tambah Proyek'
+                ? 'Add Project Form'
+                : 'Add Experience Form',
+          ),
+          findsOneWidget,
+        );
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
         expect(find.byType(MyHomePage), findsOneWidget);
