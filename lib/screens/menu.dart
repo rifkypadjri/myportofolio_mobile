@@ -93,7 +93,13 @@ class MyHomePage extends StatelessWidget {
                                     14
                             ? 1
                             : 3,
-                        mainAxisExtent: 144,
+                        // Tinggi kartu tumbuh bersama skala teks agar label panjang
+                        // seperti Tambah Pengalaman tidak overflow.
+                        mainAxisExtent:
+                            100 +
+                            44 *
+                                MediaQuery.textScalerOf(context).scale(14) /
+                                14,
                         // shrinkWrap agar ukuran kisi menyesuaikan tinggi konten anak.
                         shrinkWrap: true,
                         children: items.map((ItemHomepage item) {
