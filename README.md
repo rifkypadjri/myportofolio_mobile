@@ -151,6 +151,72 @@ Validasi sesi pengerjaan: `flutter analyze` menghasilkan **No issues found**;
    Kotlin/Java/Swift/Objective-C atau konfigurasi plugin native memerlukannya.
    Referensi: [hot reload Flutter](https://docs.flutter.dev/tools/hot-reload).
 
+### Tugas 8
+
+1. **Navigator.push(), pushReplacement(), dan pop()**
+
+   `Navigator.push()` menambahkan route baru di atas stack tanpa membuang route
+   sebelumnya, sehingga halaman lama tetap hidup di bawahnya dan tombol kembali
+   muncul. `Navigator.pushReplacement()` mengganti route teratas dengan route
+   baru; route lama dibuang, jadi tidak ada tombol kembali ke halaman itu.
+   `Navigator.pop()` mengeluarkan route teratas dan kembali ke route di bawahnya
+   (juga dipakai untuk menutup dialog dan drawer).
+
+   Formulir dari kartu aksi **Tambah Pengalaman** dibuka dengan `Navigator.push()`
+   (`lib/widgets/project_card.dart`), sehingga tombol kembali bawaan perangkat
+   mengembalikan pengguna ke halaman utama. Opsi **Home** di drawer
+   (`lib/widgets/left_drawer.dart`) lebih dulu memanggil `pop()` untuk menutup
+   drawer, lalu `pushReplacement()` ke `MyHomePage`. Halaman formulir diganti
+   halaman utama sehingga stack tidak menumpuk (formulir -> menu -> formulir ...).
+
+2. **Scaffold, AppBar, dan Drawer untuk konsistensi**
+
+   `Scaffold` menjadi kerangka tetap tiap halaman: slot `appBar`, `drawer`, dan
+   `body`. Halaman utama, formulir proyek, dan formulir pengalaman semuanya
+   memakai susunan ini, dan memakai widget `LeftDrawer` yang sama, sehingga
+   navigasi selalu ada di tempat yang sama dan hanya isi `body` yang berbeda.
+   Satu perubahan di `LeftDrawer` (misalnya opsi Add Experience) langsung
+   muncul di semua halaman.
+
+   Contoh warna tema: `Theme.of(context).colorScheme.primary` (indigo dari
+   `ColorScheme.fromSeed` di `main.dart`) dipakai sebagai warna `AppBar` di
+   halaman utama, formulir proyek, dan formulir pengalaman, juga sebagai latar
+   `DrawerHeader` dan tombol Simpan. Karena diambil dari tema, mengganti seed
+   color sekali mengubah semua halaman.
+
+3. **Tata letak formulir**
+
+   Formulir disusun sebagai `Column` berisi field yang dibungkus `Padding`,
+   di dalam `SingleChildScrollView`, `Form`, dan `SafeArea`. Satu kolom vertikal
+   cocok untuk layar ponsel dan membuat urutan pengisian jelas. `Padding`
+   (dan `SizedBox`) memberi jarak antarfield agar tidak berdempetan dan mudah
+   disentuh. `SingleChildScrollView` penting ketika ruang terbatas: tanpa itu
+   `Column` yang lebih tinggi dari layar, terlebih saat papan ketik muncul,
+   akan overflow dan tombol Simpan tak terjangkau. Dengan scroll, semua field
+   dan tombol tetap bisa dicapai (`keyboardDismissBehavior` juga menutup papan
+   ketik saat digulir). `SafeArea` menghindarkan isi dari notch dan bilah sistem.
+
+4. **GlobalKey<FormState>, validator, dan validate()**
+
+   `GlobalKey<FormState>` adalah pegangan ke `FormState` milik widget `Form`,
+   sehingga tombol Simpan, yang berada di luar field, dapat mengakses form.
+   `validator` pada tiap `TextFormField`/`FormField` adalah fungsi yang
+   menerima nilai dan mengembalikan pesan galat (string) bila tidak valid atau
+   `null` bila valid. Saat Simpan ditekan, `_formKey.currentState!.validate()`
+   menjalankan semua validator, menampilkan pesan galat pada field yang
+   bermasalah, dan mengembalikan `false` jika ada yang gagal; dialog hanya
+   dibuka ketika hasilnya `true`. `reset()` dipakai untuk mengosongkan form
+   setelah dialog ditutup.
+
+   Contoh nilai yang ditolak: Posisi berisi `"    "` (hanya spasi) ditolak
+   dengan pesan "Posisi tidak boleh kosong!" karena validator memakai `trim()`.
+   Contoh lain: Tanggal Selesai 2 sebelum Tanggal Mulai 5 ditolak. Memilih
+   jenis input atau papan ketik saja tidak cukup karena itu hanya mengatur
+   tampilan dan kemudahan mengetik, bukan aturan data: pengguna tetap bisa
+   mengosongkan field, mengetik spasi, menempel teks yang terlalu panjang, atau
+   memilih tanggal akhir yang lebih awal dari tanggal mulai. Aturan semacam itu
+   hanya bisa ditegakkan oleh validator.
+
 ## Penggunaan AI
 
 OpenAI Codex membantu membaca spesifikasi, mengubah kode, menulis tes, menyusun
