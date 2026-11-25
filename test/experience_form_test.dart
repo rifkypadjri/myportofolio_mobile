@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:myportofolio_mobile/main.dart';
+
+import 'helpers.dart';
+
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 
@@ -48,7 +50,7 @@ void main() {
   testWidgets('Experience form opens from the home action card and pops back', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(buildTestApp());
     await tester.ensureVisible(find.text('Tambah Pengalaman'));
     await tester.tap(find.text('Tambah Pengalaman'));
     await tester.pumpAndSettle();
@@ -62,7 +64,7 @@ void main() {
   testWidgets('Experience form opens from drawer and Home returns to menu', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(buildTestApp());
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Add Experience'));
@@ -82,7 +84,7 @@ void main() {
   testWidgets('Empty and whitespace-only input shows errors, no dialog', (
     tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
+    await tester.pumpWidget(wrapWithProviders(const ExperienceFormPage()));
     await save(tester);
     expect(find.text('Posisi tidak boleh kosong!'), findsOneWidget);
     expect(
@@ -101,7 +103,7 @@ void main() {
   });
 
   testWidgets('Too long text is rejected', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
+    await tester.pumpWidget(wrapWithProviders(const ExperienceFormPage()));
     await enterField(tester, 'Posisi', 'A' * 61);
     await enterField(tester, 'Deskripsi Pengalaman', 'B' * 301);
     await save(tester);
@@ -111,7 +113,7 @@ void main() {
   });
 
   testWidgets('End date before start date is rejected', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
+    await tester.pumpWidget(wrapWithProviders(const ExperienceFormPage()));
     await fillValidForm(tester);
     // Mulai tanggal 5; pilih selesai tanggal 2 pada bulan yang sama.
     await pickDate(tester, 'Tanggal Selesai', 2);
@@ -126,7 +128,7 @@ void main() {
   testWidgets('Valid input shows summary dialog; Tutup closes and resets', (
     tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
+    await tester.pumpWidget(wrapWithProviders(const ExperienceFormPage()));
     await fillValidForm(tester);
     await save(tester);
 
@@ -163,7 +165,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetViewInsets);
-    await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
+    await tester.pumpWidget(wrapWithProviders(const ExperienceFormPage()));
     await save(tester);
     expect(find.text('Posisi tidak boleh kosong!'), findsOneWidget);
     expect(tester.takeException(), isNull);

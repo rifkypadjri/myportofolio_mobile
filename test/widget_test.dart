@@ -7,17 +7,18 @@
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:myportofolio_mobile/screens/login_screen.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
-import 'package:myportofolio_mobile/main.dart';
+import 'helpers.dart';
 
 void main() {
   testWidgets('Homepage displays information and responds to menu taps', (
     WidgetTester tester,
   ) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(buildTestApp());
 
     expect(find.text('2506585800'), findsOneWidget);
     expect(find.text('Muhammad Rifky Padjri'), findsOneWidget);
@@ -39,16 +40,27 @@ void main() {
       await tester.ensureVisible(find.text(label));
       await tester.tap(find.text(label));
       await tester.pumpAndSettle();
-      expect(find.text('Kamu telah menekan tombol $label!'), findsOneWidget);
-      if (label == 'Tambah Proyek' || label == 'Tambah Pengalaman') {
-        expect(
-          find.text(
-            label == 'Tambah Proyek'
-                ? 'Add Project Form'
-                : 'Add Experience Form',
-          ),
-          findsOneWidget,
-        );
+      if (label == 'Logout') {
+        // Belum login, sehingga kartu Logout memberi tahu hal itu.
+        expect(find.text('Kamu belum login.'), findsOneWidget);
+      } else {
+        expect(find.text('Kamu telah menekan tombol $label!'), findsOneWidget);
+      }
+      if (label == 'Lihat Proyek') {
+        expect(find.text('Achievements: Projects'), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byType(MyHomePage), findsOneWidget);
+      }
+      if (label == 'Tambah Proyek') {
+        // Belum login: aplikasi mengarahkan ke layar login.
+        expect(find.byType(LoginScreen), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byType(MyHomePage), findsOneWidget);
+      }
+      if (label == 'Tambah Pengalaman') {
+        expect(find.text('Add Experience Form'), findsOneWidget);
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
         expect(find.byType(MyHomePage), findsOneWidget);
@@ -66,19 +78,19 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(
-      MaterialApp(
+      wrapWithProviders(
+        MyHomePage(),
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context)
               .copyWith(textScaler: TextScaler.linear(2)),
           child: child!,
         ),
-        home: MyHomePage(),
       ),
     );
     await tester.ensureVisible(find.text('Logout'));
     await tester.tap(find.text('Logout'));
     await tester.pumpAndSettle();
-    expect(find.text('Kamu telah menekan tombol Logout!'), findsOneWidget);
+    expect(find.text('Kamu belum login.'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
