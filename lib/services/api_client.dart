@@ -35,7 +35,8 @@ class ApiClient {
     );
     _ensureSuccess(response);
 
-    final decoded = jsonDecode(utf8.decode(response.bodyBytes)) as List<dynamic>;
+    final decoded =
+        jsonDecode(utf8.decode(response.bodyBytes)) as List<dynamic>;
     return decoded
         .map((item) => Project.fromJson(item as Map<String, dynamic>))
         .toList();
